@@ -4,7 +4,8 @@ A small hosted checkout demo built with React and TypeScript. The storefront use
 the SDK exactly as an external site would: it calls `DodoCheckout.open()` and
 receives success, error, and close callbacks without handling card data.
 
-## Deployed Link: https://neetu-embedded-checkout.netlify.app/
+## Deployed Link:- 
+https://neetu-embedded-checkout.netlify.app/
 
 ## Run it
 
