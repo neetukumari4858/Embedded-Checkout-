@@ -4,12 +4,26 @@ A small hosted checkout demo built with React and TypeScript. The storefront use
 the SDK exactly as an external site would: it calls `DodoCheckout.open()` and
 receives success, error, and close callbacks without handling card data.
 
+## Deployed Link: https://neetu-embedded-checkout.netlify.app/
+
 ## Run it
 
 ```bash
 npm install
 npm start
 ```
+## Technology Used
+
+```bash
+ReactJs
+Typescript
+Javascript
+Tailwind CSS
+```
+## Recorded Video:-
+
+https://github.com/user-attachments/assets/db0ca4ea-2a51-4cfe-b20b-06751106c260
+
 
 ## How the pieces talk
 
@@ -36,3 +50,14 @@ Use any valid-looking email, expiry, and CVC:
 | `4242 4242 4242 4242` | Succeeds |
 | `4000 0000 0000 0002` | Declines |
 | `4000 0000 0000 0341` | Fails once, then succeeds on retry |
+
+## Questions Asked:-
+
+d) Two decisions I went back and forth on  :-
+
+- Iframe vs. new tab:-I chose an iframe so the user stays on the merchant website while keeping card details isolated from the host page.
+- Close after payment failure vs. keep open:- I chose to keep the checkout open so users can easily retry the payment.
+
+e) What I’d explore next  
+
+- Integrate a real payment provider and backend.
