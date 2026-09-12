@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# Tiny Embeddable Checkout
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A small hosted checkout demo built with React and TypeScript. The storefront uses
+the SDK exactly as an external site would: it calls `DodoCheckout.open()` and
+receives success, error, and close callbacks without handling card data.
 
-## Available Scripts
+## Run it
 
-In the project directory, you can run:
+```bash
+npm install
+npm start
+```
 
-### `npm start`
+## How the pieces talk
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. `src/sdk/dodo-checkout.ts` is the host-side SDK. `open()` validates the
+   product, creates an iframe URL, and mounts it above the current page. Only
+   one checkout can be active; opening another closes the previous one with
+   `reason: "replaced"`.
+2. `src/components/HostedCheckout.tsx` is the checkout app inside that iframe.
+   The demo routes to it with `?checkout_preview=1`; a deployed integration
+   would point `checkoutUrl` at the separately hosted checkout app.
+3. The iframe sends `postMessage` events for resize, errors, success, and close.
+   The SDK accepts messages only from the configured checkout origin and iframe,
+   then maps them to `onSuccess`, `onError`, and `onClose`.
+4. `src/components/Storefront.tsx` is the integration example. Its callback
+   log makes each SDK event visible, while the checkout keeps all card fields
+   inside the iframe.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Try the fake cards
 
-### `npm test`
+Use any valid-looking email, expiry, and CVC:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| Card number | Result |
+| --- | --- |
+| `4242 4242 4242 4242` | Succeeds |
+| `4000 0000 0000 0002` | Declines |
+| `4000 0000 0000 0341` | Fails once, then succeeds on retry |
